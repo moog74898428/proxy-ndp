@@ -32,7 +32,7 @@ use std::vec;
 
 static USAGE: &str = "USAGE: proxy-ndp <NETWORK INTERFACE> <TARGET MAC ADDRESS> <PREFIX> <PREFIX LENGTH>";
 
-struct TunnelConfiguration {
+struct Configuration {
     target_mac_address: MacAddr,
     prefix: Ipv6Addr,
     prefix_length: u8,
@@ -56,7 +56,7 @@ fn main() {
         Some(n) => n.parse().expect("Invalid prefix length"),
         None => { eprintln!("{}", USAGE); std::process::exit(1); }
     };
-    let config = TunnelConfiguration { target_mac_address, prefix, prefix_length };
+    let config = Configuration { target_mac_address, prefix, prefix_length };
     let interface0 = Arc::new(
         pnet::datalink::interfaces()
             .into_iter()
@@ -126,7 +126,7 @@ fn mask_ipv6_addr(ipv6_addr: &Ipv6Addr, prefix_length: u8) -> [u8; 16] {
     result
 }
 
-fn process_ipv6(_id: u8, config: &TunnelConfiguration, ethernet: &EthernetPacket, _itf0: &NetworkInterface, tx: &Sender<Box<[u8]>>) {
+fn process_ipv6(_id: u8, config: &Configuration, ethernet: &EthernetPacket, _itf0: &NetworkInterface, tx: &Sender<Box<[u8]>>) {
     let header = Ipv6Packet::new(ethernet.payload()).expect("bad Ethernet payload");
     match header.get_next_header() {
         IpNextHeaderProtocols::Icmpv6 => {
@@ -177,7 +177,7 @@ fn process_ipv6(_id: u8, config: &TunnelConfiguration, ethernet: &EthernetPacket
     }
 }
 
-fn process_ethernet(id: u8, config: &TunnelConfiguration, packet_in: &[u8], itf0: &NetworkInterface, tx: &Sender<Box<[u8]>>) {
+fn process_ethernet(id: u8, config: &Configuration, packet_in: &[u8], itf0: &NetworkInterface, tx: &Sender<Box<[u8]>>) {
     let ethernet = EthernetPacket::new(packet_in).unwrap();
     match ethernet.get_ethertype() {
         EtherTypes::Ipv6 => process_ipv6(id, config, &ethernet, itf0, tx),
