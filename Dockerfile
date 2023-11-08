@@ -8,5 +8,5 @@ WORKDIR /work
 RUN /root/.cargo/bin/cargo build --release
 
 FROM gcr.io/distroless/cc-debian12:latest
-COPY --from=0 /work/target/release/proxy-na /
-ENTRYPOINT [ "/proxy-na" ]
+COPY --from=0 /work/target/release/proxy-ndp /
+ENTRYPOINT [ "/proxy-ndp" ]

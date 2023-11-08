@@ -30,7 +30,7 @@ use std::sync::Mutex;
 use std::sync::mpsc::Sender;
 use std::vec;
 
-static USAGE: &str = "USAGE: proxy-na <NETWORK INTERFACE> <TARGET MAC ADDRESS> <PREFIX> <PREFIX LENGTH>";
+static USAGE: &str = "USAGE: proxy-ndp <NETWORK INTERFACE> <TARGET MAC ADDRESS> <PREFIX> <PREFIX LENGTH>";
 
 struct TunnelConfiguration {
     target_mac_address: MacAddr,
